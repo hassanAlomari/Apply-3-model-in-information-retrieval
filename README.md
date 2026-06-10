@@ -44,10 +44,82 @@ graph TD
     K --> M
     L --> M
 ```
-🧮 Mathematical BackgroundThe engine is powered by robust mathematical models implemented entirely from scratch using numpy and nltk.1. Vector Space Model (VSM)Documents and queries are represented as vectors in a multi-dimensional space. The similarity is calculated using the Cosine Similarity formula:$$ \text{Cosine}(Q, D) = \frac{Q \cdot D}{|Q| |D|} $$Where the weights are calculated using Term Frequency-Inverse Document Frequency (TF-IDF):$$ IDF(t) = \log\left(\frac{N}{df_t}\right) $$2. Okapi BM25The BM25 algorithm improves upon TF-IDF by penalizing excessively long documents and saturating term frequency. The ranking score is computed as:$$ \text{Score}(D, Q) = \sum_{i=1}^{n} IDF(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{avgdl}\right)} $$Where:$f(q_i, D)$ is the term frequency in the document.$|D|$ is the length of the document.$avgdl$ is the average document length in the corpus.$k_1$ (Term frequency saturation) and $b$ (Length normalization) are tunable parameters (Default: $k_1 = 1.5$, $b = 0.75$).🚀 Installation & SetupClone the repository:Bashgit clone [https://github.com/YourUsername/Your-Repo-Name.git](https://github.com/YourUsername/Your-Repo-Name.git)
-cd Your-Repo-Name
-Install dependencies:It is recommended to use a virtual environment. Install the required libraries using:Bashpip install pandas numpy nltk PyPDF2
-Download NLTK Data:The application requires the English stopwords corpus. Open a Python terminal and run:Pythonimport nltk
+## 🧮 Mathematical Foundation
+
+The retrieval engine combines **Machine Learning Classification** with the **Vector Space Model (VSM)** to provide efficient and context-aware search.
+
+### 1. TF-IDF Representation
+
+Both documents and user queries are transformed into numerical vectors using **Term Frequency-Inverse Document Frequency (TF-IDF)**.
+
+The inverse document frequency of a term is defined as:
+
+$$
+IDF(t)=\log\left(\frac{N}{df_t}\right)
+$$
+
+Where:
+
+* $N$ = Total number of documents.
+* $df_t$ = Number of documents containing term $t$.
+
+This weighting scheme increases the importance of informative terms while reducing the impact of common words.
+
+---
+
+### 2. Intent Classification (LinearSVC)
+
+The system employs a **Linear Support Vector Classifier (LinearSVC)** to predict the most relevant domain for a given query.
+
+Instead of searching the entire corpus, the classifier first assigns the query to one of the predefined categories:
+
+* Technology
+* Health
+* Education
+* Politics
+* Sports
+
+This significantly reduces the search space and improves retrieval precision.
+
+---
+
+### 3. Vector Space Similarity
+
+After the category is predicted, the query is compared only with documents belonging to that category using **Cosine Similarity**.
+
+The similarity score between a query $Q$ and a document $D$ is computed as:
+
+$$
+\text{Cosine Similarity}(Q,D)=
+\frac{Q \cdot D}
+{|Q||D|}
+$$
+
+Where:
+
+* $Q \cdot D$ is the dot product between vectors.
+* $|Q|$ and $|D|$ are the vector magnitudes.
+
+Documents are then ranked according to their similarity scores, and the most relevant results are returned to the user.
+
+---
+
+### 🎯 Why This Hybrid Approach?
+
+Traditional retrieval systems compute similarity against the entire document collection.
+
+This project introduces a two-stage retrieval strategy:
+
+1. **Intent Detection (LinearSVC)** narrows the search scope.
+2. **Localized VSM Search** ranks documents only within the predicted category.
+
+As a result, the system achieves:
+
+* Reduced computational cost.
+* Smaller search space.
+* Better contextual relevance.
+* Faster retrieval performance.
+
 nltk.download('stopwords')
 Run the Application:Bashpython gui/app.py
 🕹️ How to UseClick 📌 Attach PDF files and select one or multiple PDF documents from your machine.Verify the loaded documents in the left content pane.Enter your search terms in the Search Query field.Select your preferred Recovery Model from the dropdown menu.Note: If BM25 is selected, an additional input field will appear allowing you to tune the $k_1$ parameter (between 1.2 and 2.0).Click 🔍 Search to view the ranked results and their corresponding scores in the bottom pane.
